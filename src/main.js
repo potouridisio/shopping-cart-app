@@ -15,6 +15,7 @@ function generateProducts(n = 10) {
 const products = generateProducts();
 const productList = document.getElementById("product-list");
 const cartItems = document.getElementById("cart-items");
+const clearCartBtn = document.getElementById("clear-cart");
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -57,7 +58,6 @@ function renderProducts() {
 
 function updateCart() {
   cartItems.innerHTML = "";
-  let total = 0;
 
   cart.forEach((item) => {
     const li = document.createElement("li");
@@ -79,18 +79,29 @@ function updateCart() {
     const removeBtn = document.createElement("button");
     removeBtn.className = "text-red-500 text-sm hover:underline";
     removeBtn.textContent = "Remove";
+    removeBtn.addEventListener("click", () => {
+      if (item.quantity > 1) {
+        item.quantity -= 1;
+      } else {
+        cart = cart.filter((i) => i.id !== item.id);
+      }
+      updateCart();
+    });
 
     li.appendChild(info);
     li.appendChild(removeBtn);
 
     cartItems.appendChild(li);
-
-    total += item.price * item.quantity;
   });
 
-  cartTotal.textContent = total.toFixed(2);
   localStorage.setItem("cart", JSON.stringify(cart));
 }
+
+clearCartBtn.addEventListener("click", () => {
+  cart = [];
+  localStorage.setItem("cart", JSON.stringify(cart));
+  updateCart();
+});
 
 renderProducts();
 updateCart();
