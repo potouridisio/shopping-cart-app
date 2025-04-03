@@ -6,14 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shopping Cart App</title>
   </head>
-  <body class="bg-gray-100 p-8">
-    <div class="container mx-auto relative">
-      <div
-        class="bg-white p-4 shadow rounded absolute top-0 right-0 w-64 z-10"
-        id="cart"
-      ></div>
-      <h1 class="text-2xl font-bold mb-4">Product List</h1>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="productList"></div>
+  <body class="bg-gray-100 min-h-screen font-sans">
+    <!-- Shopping Cart (Top Right) -->
+    <div class="fixed top-4 right-4 w-80 bg-white shadow-lg rounded-xl p-5 z-50">
+      <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+        🛒 <span>Shopping Cart</span>
+      </h2>
+      <ul id="cart-items"
+          class="divide-y max-h-60 overflow-y-auto mb-4 text-sm">
+      </ul>
+      <div class="text-right font-semibold text-gray-800 text-base">
+        Total: $<span id="cart-total">0.00</span>
+      </div>
+      <button id="clear-cart"
+              class="mt-4 w-full py-2 text-sm bg-red-500 hover:bg-red-600 text-white rounded transition">
+        Clear Cart
+      </button>
+    </div>
+    <!-- Products Section -->
+    <div class="max-w-4xl mx-auto pt-12">
+      <h1 class="text-3xl font-bold text-gray-800 mb-6">🛍️ Product Catalog</h1>
+      <div id="product-list"
+           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
     <script type="module" src="/src/main.js"></script>
   </body>

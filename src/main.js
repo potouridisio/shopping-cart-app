@@ -1,5 +1,5 @@
 import "./style.css";
-/*rafail petridis */
+
 const products = Array.from({ length: 10 }, (_, i) => ({
   id: i + 1,
   name: `Product ${i + 1}`,
@@ -9,74 +9,88 @@ const products = Array.from({ length: 10 }, (_, i) => ({
 const cart = JSON.parse(localStorage.getItem("cart"));
 
 function renderProducts() {
-  const productList = document.getElementById("productList");
-
   productList.innerHTML = "";
 
   products.forEach((product) => {
-    const productEl = document.createElement("div");
+    const card = document.createElement("div");
+    card.className =
+      "bg-white shadow rounded-lg p-4 flex flex-col justify-between";
 
-    productEl.className =
-      "bg-white p-4 shadow rounded flex flex-col justify-between";
+    const title = document.createElement("h3");
+    title.className = "font-semibold text-gray-700 text-lg mb-2";
+    title.textContent = product.name;
 
-    const productName = document.createElement("h3");
-    productName.className = "font-semibold";
-    productName.textContent = product.name;
+    const price = document.createElement("p");
+    price.className = "text-gray-500 mb-4";
+    price.textContent = `$${product.price}`;
 
-    const productPrice = document.createElement("p");
-    productPrice.className = "mb-2";
-    productPrice.textContent = `Price: ${product.price}`;
-
-    const addToCart = document.createElement("button");
-    addToCart.className =
-      "bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded";
-    addToCart.textContent = "Add to Cart";
-
-    addToCart.addEventListener("click", () => {
-      const existingItem = cart.find((item) => item.id === product.id);
-
-      if (existingItem) {
-        existingItem.quantity++;
+    const button = document.createElement("button");
+    button.className =
+      "mt-auto bg-blue-500 hover:bg-blue-600 text-white text-sm px-3 py-2 rounded";
+    button.textContent = "Add to Cart";
+    button.addEventListener("click", () => {
+      const cartItem = cart.find((item) => item.id === product.id);
+      if (cartItem) {
+        cartItem.quantity += 1;
       } else {
         cart.push({ ...product, quantity: 1 });
       }
-
-      localStorage.setItem("cart", JSON.stringify(cart));
-
-      renderCart();
+      updateCart();
     });
 
-    productEl.appendChild(productName);
-    productEl.appendChild(productPrice);
-    productEl.appendChild(addToCart);
-
-    productList.appendChild(productEl);
+    card.appendChild(title);
+    card.appendChild(price);
+    card.appendChild(button);
+    productList.appendChild(card);
   });
 }
 
-function renderCart() {
-  const cartEl = document.getElementById("cart");
-
-  cartEl.innerHTML = '<h2 class="font-bold mb-2">Shopping Cart</h2>';
-
-  if (cart.length === 0) {
-    cartEl.innerHTML += "<p>Your cart is empty.</p>";
-
-    return;
-  }
+function updateCart() {
+  cartItems.innerHTML = "";
 
   cart.forEach((item) => {
-    const itemEl = document.createElement("div");
+    const li = document.createElement("li");
+    li.className = "py-2 flex justify-between items-center text-gray-700";
 
-    itemEl.className = "flex justify-between items-center border-b py-2";
-    itemEl.innerHTML = `
-          <span>${item.name} (x${item.quantity})</span>
-          <button class="text-red-500">Remove</button>
-      `;
+    const info = document.createElement("div");
 
-    cartEl.appendChild(itemEl);
+    const name = document.createElement("span");
+    name.className = "font-medium";
+    name.textContent = item.name;
+
+    const detail = document.createElement("span");
+    detail.className = "block text-xs text-gray-500";
+    detail.textContent = `$${item.price} x ${item.quantity}`;
+
+    info.appendChild(name);
+    info.appendChild(detail);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "text-red-500 text-sm hover:underline";
+    removeBtn.textContent = "Remove";
+    removeBtn.addEventListener("click", () => {
+      if (item.quantity > 1) {
+        item.quantity -= 1;
+      } else {
+        cart = cart.filter((i) => i.id !== item.id);
+      }
+      updateCart();
+    });
+
+    li.appendChild(info);
+    li.appendChild(removeBtn);
+
+    cartItems.appendChild(li);
   });
+
+  localStorage.setItem("cart", JSON.stringify(cart));
 }
 
+clearCartBtn.addEventListener("click", () => {
+  cart = [];
+  localStorage.setItem("cart", JSON.stringify(cart));
+  updateCart();
+});
+
 renderProducts();
-renderCart();
+updateCart();
